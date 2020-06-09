@@ -13,13 +13,13 @@ type records struct {
 }
 
 type AliDNS struct {
-	c   *alidns.Client
-	dn  string
-	p   string
+	c  *alidns.Client
+	dn string
+	p  string
 }
 
 func (a *AliDNS) Update() error {
-	rcds,err := a.describeRecords()
+	rcds, err := a.describeRecords()
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (a *AliDNS) Update() error {
 }
 
 func (a *AliDNS) findRecordID(r []records) string {
-	for _,rcd := range r {
+	for _, rcd := range r {
 		if rcd.Prefix == a.p {
 			return rcd.RecordID
 		}
@@ -38,24 +38,24 @@ func (a *AliDNS) findRecordID(r []records) string {
 	return ""
 }
 
-func (a *AliDNS) describeRecords() ([]records,error) {
+func (a *AliDNS) describeRecords() ([]records, error) {
 	request := alidns.CreateDescribeDomainRecordsRequest()
 	request.DomainName = a.dn
 	request.Scheme = "https"
 	response, err := a.c.DescribeDomainRecords(request)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	rcds := make([]records,0,len(response.DomainRecords.Record))
-	for _,rcd:= range response.DomainRecords.Record {
+	rcds := make([]records, 0, len(response.DomainRecords.Record))
+	for _, rcd := range response.DomainRecords.Record {
 		rcds = append(rcds, records{
 			DomainName: rcd.DomainName,
-			RecordID: rcd.RecordId,
-			Value: rcd.Value,
-			Prefix: rcd.RR,
+			RecordID:   rcd.RecordId,
+			Value:      rcd.Value,
+			Prefix:     rcd.RR,
 		})
 	}
-	return rcds,nil
+	return rcds, nil
 }
 
 func (a *AliDNS) addRecords() error {
@@ -64,8 +64,12 @@ func (a *AliDNS) addRecords() error {
 	request.RR = a.p
 	request.Type = "A"
 	request.Scheme = "https"
-	request.Value = GetIP()
-	_, err := a.c.AddDomainRecord(request)
+	ip, err := GetIP()
+	if err != nil {
+		return err
+	}
+	request.Value = ip
+	_, err = a.c.AddDomainRecord(request)
 	if err != nil {
 		return err
 	}
@@ -78,16 +82,19 @@ func (a *AliDNS) updateRecords(id string) error {
 	request.RecordId = id
 	request.RR = a.p
 	request.Type = "A"
-	request.Value = GetIP()
-	_, err := a.c.UpdateDomainRecord(request)
+	ip, err := GetIP()
+	if err != nil {
+		return err
+	}
+	request.Value = ip
+	_, err = a.c.UpdateDomainRecord(request)
 	return err
 }
 
-func NewAliDNS(AccessKeyID string,AccessSecret string, info DomainInfo) (DNS,error) {
-	client,err := alidns.NewClientWithAccessKey("cn-hangzhou",AccessKeyID,AccessSecret)
+func NewAliDNS(AccessKeyID string, AccessSecret string, info DomainInfo) (DNS, error) {
+	client, err := alidns.NewClientWithAccessKey("cn-hangzhou", AccessKeyID, AccessSecret)
 	if err != nil {
 		return nil, err
 	}
-	return &AliDNS{c:client,dn:info.DomainName,p:info.Prefix},nil
+	return &AliDNS{c: client, dn: info.DomainName, p: info.Prefix}, nil
 }
-
