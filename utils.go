@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"net"
 	"net/http"
+	"regexp"
+	"strings"
 )
 
 func GetIP() (string, error) {
@@ -32,4 +35,18 @@ func GetIP() (string, error) {
 		return "", errors.New("server error")
 	}
 	return ip, nil
+}
+
+func GetIPv6() (string, error) {
+	s, err := net.InterfaceAddrs()
+	if err != nil {
+		return "", err
+	}
+	for _, a := range s {
+		i := regexp.MustCompile(`(\w+:){7}\w+`).FindString(a.String())
+		if strings.Count(i, ":") == 7 {
+			return i, nil
+		}
+	}
+	return "", errors.New("未找到有效ipv6地址")
 }

@@ -5,8 +5,7 @@ type DNS interface {
 }
 
 type DomainInfo struct {
+	Type       string
 	DomainName string
 	Prefix     string
 }
-
-

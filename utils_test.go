@@ -1,6 +1,7 @@
 package ddns
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -24,4 +25,12 @@ func TestGetIP(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGetIPv6(t *testing.T) {
+	ip, err := GetIPv6()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(ip)
 }
