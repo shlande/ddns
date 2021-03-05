@@ -11,7 +11,7 @@ func ParseAliDNS(args []string) (ddns.DNS, error) {
 	}
 	keyId, secret := args[0], args[1]
 	return ddns.NewAliDNS(keyId, secret, ddns.DomainInfo{
-		Type:       "A",
+		Type:       tp,
 		DomainName: domain,
 		Prefix:     prefix,
 	})

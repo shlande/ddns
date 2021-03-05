@@ -43,10 +43,12 @@ func (a *AliDNS) getIp() (string, error) {
 	var ip string
 	var err error
 	switch a.tp {
-	case "A":
+	case "ipv4":
 		ip, err = GetIP()
-	case "AAAA":
+	case "ipv6":
 		ip, err = GetIPv6()
+	case "xd":
+		ip, err = GetXdIp()
 	}
 	return ip, err
 }
@@ -84,7 +86,12 @@ func (a *AliDNS) addRecords(value string) error {
 	request := alidns.CreateAddDomainRecordRequest()
 	request.DomainName = a.dn
 	request.RR = a.p
-	request.Type = a.tp
+	if a.tp == "ipv4" || a.tp == "xd" {
+		request.Type = "A"
+	}
+	if a.tp == "ipv6" {
+		request.Type = "AAAA"
+	}
 	request.Scheme = "https"
 	request.Value = value
 	_, err := a.c.AddDomainRecord(request)
@@ -110,7 +117,7 @@ func NewAliDNS(AccessKeyID string, AccessSecret string, info DomainInfo) (DNS, e
 	if err != nil {
 		return nil, err
 	}
-	if info.Type != "A" && info.Type != "AAAA" {
+	if info.Type != "xd" && info.Type != "ipv4" && info.Type != "ipv6" {
 		return nil, errors.New("无效的域名记录类型：" + info.Type)
 	}
 	return &AliDNS{c: client, dn: info.DomainName, p: info.Prefix, tp: info.Type}, nil

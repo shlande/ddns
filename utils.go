@@ -37,6 +37,18 @@ func GetIP() (string, error) {
 	return ip, nil
 }
 
+func GetXdIp() (string, error) {
+	resp, err := http.DefaultClient.Get("https://linux.xidian.edu.cn/ip")
+	if err != nil {
+		return "", err
+	}
+	bt, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(bt), nil
+}
+
 func GetIPv6() (string, error) {
 	s, err := net.InterfaceAddrs()
 	if err != nil {

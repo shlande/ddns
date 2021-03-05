@@ -34,3 +34,7 @@ func TestGetIPv6(t *testing.T) {
 	}
 	fmt.Println(ip)
 }
+
+func TestGetXdIp(t *testing.T) {
+	fmt.Println(GetXdIp())
+}

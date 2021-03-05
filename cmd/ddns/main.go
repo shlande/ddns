@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var provider, domain, prefix string
+var provider, domain, prefix, tp string
 
 var ttl, maxRetry int
 
@@ -21,6 +21,7 @@ func main() {
 	flag.StringVar(&prefix, "prefix", "", "域名的前缀")
 	flag.IntVar(&ttl, "ttl", 30, "查询间隔")
 	flag.IntVar(&maxRetry, "retry", 60, "最大连续出错次数")
+	flag.StringVar(&tp, "type", "ipv4", "绑定网络的类型，支持ipv4，ipv6，xd(校园网)")
 
 	flag.Parse()
 
@@ -31,7 +32,6 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
-
 	if err != nil {
 		panic(err)
 	}
