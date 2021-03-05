@@ -8,6 +8,7 @@ import (
 func createAliDNS() *AliDNS {
 	dns, err := NewAliDNS("", "",
 		DomainInfo{
+			Type:       "",
 			DomainName: "",
 			Prefix:     "",
 		},

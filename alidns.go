@@ -82,16 +82,21 @@ func (a *AliDNS) describeRecords() ([]records, error) {
 	return rcds, nil
 }
 
+func (a *AliDNS) toDNSType() string {
+	if a.tp == "ipv4" || a.tp == "xd" {
+		return "A"
+	}
+	if a.tp == "ipv6" {
+		return "AAAA"
+	}
+	return ""
+}
+
 func (a *AliDNS) addRecords(value string) error {
 	request := alidns.CreateAddDomainRecordRequest()
 	request.DomainName = a.dn
 	request.RR = a.p
-	if a.tp == "ipv4" || a.tp == "xd" {
-		request.Type = "A"
-	}
-	if a.tp == "ipv6" {
-		request.Type = "AAAA"
-	}
+	request.Type = a.toDNSType()
 	request.Scheme = "https"
 	request.Value = value
 	_, err := a.c.AddDomainRecord(request)
@@ -106,7 +111,7 @@ func (a *AliDNS) updateRecords(id string, value string) error {
 	request.Scheme = "https"
 	request.RecordId = id
 	request.RR = a.p
-	request.Type = a.tp
+	request.Type = a.toDNSType()
 	request.Value = value
 	_, err := a.c.UpdateDomainRecord(request)
 	return err

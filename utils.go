@@ -46,7 +46,7 @@ func GetXdIp() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(bt), nil
+	return strings.ReplaceAll(string(bt), "\n", ""), nil
 }
 
 func GetIPv6() (string, error) {
