@@ -26,7 +26,7 @@ func (a *AliDNS) Update() error {
 	if err != nil {
 		return err
 	}
-	ip, err := a.getIp()
+	ip, err := getIp(a.tp)
 	if err != nil {
 		return err
 	}
@@ -37,20 +37,6 @@ func (a *AliDNS) Update() error {
 		return a.updateRecords(rcd.RecordID, ip)
 	}
 	return a.addRecords(ip)
-}
-
-func (a *AliDNS) getIp() (string, error) {
-	var ip string
-	var err error
-	switch a.tp {
-	case "ipv4":
-		ip, err = GetIP()
-	case "ipv6":
-		ip, err = GetIPv6()
-	case "xd":
-		ip, err = GetXdIp()
-	}
-	return ip, err
 }
 
 func (a *AliDNS) findRecordID(r []records) records {

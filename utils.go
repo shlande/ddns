@@ -10,6 +10,20 @@ import (
 	"strings"
 )
 
+func getIp(tp string) (string, error) {
+	var ip string
+	var err error
+	switch tp {
+	case "ipv4":
+		ip, err = GetIP()
+	case "ipv6":
+		ip, err = GetIPv6()
+	case "xd":
+		ip, err = GetXdIp()
+	}
+	return ip, err
+}
+
 func GetIP() (string, error) {
 	var status, ip string
 	rsp := make(map[string]interface{})

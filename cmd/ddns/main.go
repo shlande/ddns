@@ -16,7 +16,7 @@ func main() {
 		dns ddns.DNS
 		err error
 	)
-	flag.StringVar(&provider, "provider", "", "ddns服务提供商，目前只支持alidns")
+	flag.StringVar(&provider, "provider", "", "ddns服务提供商，目前支持alidns和dnspod")
 	flag.StringVar(&domain, "domain", "", "需要解析的域名")
 	flag.StringVar(&prefix, "prefix", "", "域名的前缀")
 	flag.IntVar(&ttl, "ttl", 30, "查询间隔")
@@ -28,6 +28,8 @@ func main() {
 	switch provider {
 	case "alidns":
 		dns, err = ParseAliDNS(flag.Args())
+	case "dnspod":
+		dns, err = ParseDnsPod(flag.Args())
 	default:
 		flag.PrintDefaults()
 		return
