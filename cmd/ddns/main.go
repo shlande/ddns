@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ddns"
 	"flag"
+	"github.com/shiningacg/ddns"
 	"log"
 	"time"
 )
