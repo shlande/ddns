@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/shiningacg/ddns"
+	"github.com/shlande/ddns"
 	"log"
 	"time"
 )

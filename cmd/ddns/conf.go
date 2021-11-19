@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"github.com/shiningacg/ddns"
+	"github.com/shlande/ddns"
 )
 
 func ParseAliDNS(args []string) (ddns.DNS, error) {
