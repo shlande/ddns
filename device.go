@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"net"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -46,13 +47,10 @@ func getIpFromDevice(rex *regexp.Regexp, ipv4 bool, ipv6 bool) ([]*net.IPNet, bo
 		// 保存ip信息
 		for _, v := range addr {
 			ip := v.(*net.IPNet)
-			if ipv4 && ip.IP.To4() == nil {
-				continue
+			// 如果ipv6，ipv4中
+			if (ipv4 && ip.IP.To4() != nil) || ipv6 && ip.IP.To4() == nil {
+				ips = append(ips, ip)
 			}
-			if ipv6 && ip.IP.To16() == nil {
-				continue
-			}
-			ips = append(ips, ip)
 		}
 	}
 	return ips, len(ifac) != 0, nil
@@ -69,7 +67,7 @@ func (d DeviceGetter) IPv6() ([]string, error) {
 	}
 	ips := make([]string, 0, len(res))
 	for _, v := range res {
-		ips = append(ips, v.String())
+		ips = append(ips, unmask(v))
 	}
 	return ips, nil
 }
@@ -81,7 +79,11 @@ func (d DeviceGetter) IP() ([]string, error) {
 	}
 	ips := make([]string, 0, len(res))
 	for _, v := range res {
-		ips = append(ips, v.String())
+		ips = append(ips, unmask(v))
 	}
 	return ips, nil
+}
+
+func unmask(ipNet *net.IPNet) string {
+	return strings.Split(ipNet.String(), "/")[0]
 }
