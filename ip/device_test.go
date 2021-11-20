@@ -1,4 +1,4 @@
-package ddns
+package ip
 
 import (
 	"fmt"
