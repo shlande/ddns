@@ -50,6 +50,7 @@ func findBestSolution(rcds []*Record, tp string, addrs []string) (del, crt, upd 
 		// 如果所有记录都匹配完成了，直接标记无效的ip记录为删除
 		if len(addrs) == 0 && v&2 == 0 {
 			del = append(del, rcd)
+			continue
 		}
 		// 寻找没有匹配成功的记录,把它的记录值修改
 		if v&2 == 0 {
