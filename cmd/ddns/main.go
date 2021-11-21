@@ -23,6 +23,8 @@ func main() {
 	flag.IntVar(&config.TTL, "ttl", 30, "查询间隔")
 	flag.StringVar(&config.Detect, "detect", "ip", "绑定ip获取器，支持public，xd, device")
 	flag.StringVar(&config.Type, "type", "ip", "网络类型，支持ip，ipv6")
+	flag.StringVar(&config.SecretKey, "secret-key", "", "密钥")
+	flag.StringVar(&config.SecretId, "secret-id", "", "密钥id")
 
 	flag.Parse()
 

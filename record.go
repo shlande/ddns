@@ -19,7 +19,7 @@ func (r *Record) Merge(diff *Record) {
 }
 
 // 查找修改方案,返回数组有三个元素，第一个是create，第二个是delete，第三个是update
-func findBestSolution(rcds []*Record, tp string, addrs []string) (del, crt, upd []*Record, err error) {
+func findBestSolution(rcds []*Record, tp, domain, prefix string, addrs []string) (del, crt, upd []*Record, err error) {
 	del = make([]*Record, 0, len(rcds))
 	crt = make([]*Record, 0, len(rcds))
 	upd = make([]*Record, 0, len(rcds))
@@ -62,8 +62,10 @@ func findBestSolution(rcds []*Record, tp string, addrs []string) (del, crt, upd 
 	// 如果地址还有剩下的，就直接创建新记录
 	for _, v := range addrs {
 		crt = append(crt, &Record{
-			Type:  tp,
-			Value: v,
+			DomainName: domain,
+			Type:       tp,
+			Prefix:     prefix,
+			Value:      v,
 		})
 	}
 	return crt, del, upd, nil

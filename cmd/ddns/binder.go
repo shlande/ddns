@@ -22,10 +22,10 @@ func buildBinder(config BindConfig) *ddns.Binder {
 	)
 }
 
-func buildDomain(tp, domain, id, key string) ddns.Domain {
+func buildDomain(pvd, domain, id, key string) ddns.Domain {
 	var dm ddns.Domain
 	var err error
-	switch tp {
+	switch pvd {
 	case "alidns":
 		dm, err = provider.NewAliDomain(domain, id, key)
 	case "dnspod":

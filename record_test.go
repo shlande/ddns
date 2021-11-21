@@ -24,7 +24,7 @@ func TestFindBestSolution(t *testing.T) {
 			Prefix:     "test",
 		},
 	}
-	crt, del, upd, err := findBestSolution(has, "A", []string{"10.0.0.1"})
+	crt, del, upd, err := findBestSolution(has, "A", "colaha.tech", "test", []string{"10.0.0.1"})
 	if err != nil {
 		panic(err)
 	}
@@ -49,11 +49,28 @@ func TestFindBestSolution(t *testing.T) {
 		},
 	}
 
-	crt, del, upd, err = findBestSolution(has, "A", []string{"10.0.0.1"})
+	crt, del, upd, err = findBestSolution(has, "A", "colaha.tech", "test", []string{"10.0.0.1"})
 	if err != nil {
 		panic(err)
 	}
 	if !check(crt, del, upd, nil, has[1:], want) {
+		panic("not equal")
+	}
+
+	has = []*Record{}
+
+	crt, del, upd, err = findBestSolution(has, "A", "colaha.tech", "test", []string{"10.0.0.1"})
+	if err != nil {
+		panic(err)
+	}
+	if !check(crt, del, upd, []*Record{
+		{
+			Type:       "A",
+			DomainName: "colaha.tech",
+			Value:      "10.0.0.1",
+			Prefix:     "test",
+		},
+	}, nil, nil) {
 		panic("not equal")
 	}
 }
