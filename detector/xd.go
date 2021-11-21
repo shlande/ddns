@@ -1,4 +1,4 @@
-package ip
+package detector
 
 import (
 	"io/ioutil"
@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-type XdIpGetter struct{}
+type Xd struct{}
 
-func (x XdIpGetter) IP() ([]string, error) {
+func (x Xd) IP() ([]string, error) {
 	resp, err := http.DefaultClient.Get("https://linux.xidian.edu.cn/ip")
 	if err != nil {
 		return nil, err

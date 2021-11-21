@@ -1,4 +1,4 @@
-package dns
+package ddns
 
 // Record 保存记录信息
 type Record struct {
@@ -7,6 +7,15 @@ type Record struct {
 	RecordID   string
 	Value      string
 	Prefix     string
+}
+
+func (r *Record) Merge(diff *Record) {
+	if len(diff.Type) != 0 {
+		r.Type = diff.Type
+	}
+	if len(diff.Value) == 0 {
+		r.Value = diff.Value
+	}
 }
 
 // 查找修改方案,返回数组有三个元素，第一个是create，第二个是delete，第三个是update
@@ -57,13 +66,4 @@ func findBestSolution(rcds []*Record, tp string, addrs []string) (del, crt, upd 
 		})
 	}
 	return crt, del, upd, nil
-}
-
-func mergeRecord(target *Record, diff *Record) {
-	if len(diff.Type) != 0 {
-		target.Type = diff.Type
-	}
-	if len(diff.Value) == 0 {
-		target.Value = diff.Value
-	}
 }

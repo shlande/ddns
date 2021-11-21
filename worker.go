@@ -6,23 +6,23 @@ import (
 	"time"
 )
 
-func runIpv6Worker(ctx context.Context, getter IPv6Getter, v6 DnsV6, ttl int64) {
+func RunIpv6Worker(ctx context.Context, getter DetectorV6, binder *Binder, ttl int64) {
 	runTTl(ctx, ttl, func() error {
 		addr, err := getter.IPv6()
 		if err != nil {
 			return err
 		}
-		return v6.BindV6(addr)
+		return binder.BindV6(addr)
 	})
 }
 
-func runIpWorker(ctx context.Context, ip IpGetter, dns Dns, ttl int64) {
+func RunIpWorker(ctx context.Context, ip Detector, binder *Binder, ttl int64) {
 	runTTl(ctx, ttl, func() error {
 		addr, err := ip.IP()
 		if err != nil {
 			return err
 		}
-		return dns.Bind(addr)
+		return binder.Bind(addr)
 	})
 }
 

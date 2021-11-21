@@ -1,4 +1,4 @@
-package ip
+package detector
 
 import (
 	"fmt"
@@ -6,7 +6,10 @@ import (
 )
 
 func TestGetIpFromDevice(t *testing.T) {
-	getter := NewDeviceGetter("en0")
+	getter, err := NewDeviceGetter("en0")
+	if err != nil {
+		panic(err)
+	}
 	ip, err := getter.IP()
 	if err != nil {
 		panic(err)

@@ -1,4 +1,4 @@
-package ip
+package detector
 
 import (
 	"fmt"
@@ -6,6 +6,6 @@ import (
 )
 
 func TestXdIpGetter(t *testing.T) {
-	getter := XdIpGetter{}
+	getter := Xd{}
 	fmt.Println(getter.IP())
 }

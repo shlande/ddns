@@ -1,4 +1,4 @@
-package ip
+package detector
 
 import (
 	"fmt"
@@ -6,6 +6,6 @@ import (
 )
 
 func TestPublicIpGetter_IP(t *testing.T) {
-	getter := PublicIpGetter{}
+	getter := Public{}
 	fmt.Println(getter.IP())
 }

@@ -1,4 +1,6 @@
-package dns
+package ddns
+
+type DomainBuilder func(domain string, id, key string) (Domain, error)
 
 type Domain interface {
 	GetByPrefix(prefix string) ([]*Record, error)
@@ -42,7 +44,7 @@ func (d cache) save(rcds ...*Record) {
 // UpdateByRecords 注意，update不会更新参数中的信息
 func (d cache) UpdateByRecords(rcd ...*Record) error {
 	for _, v := range rcd {
-		mergeRecord(d.cache[v.RecordID], v)
+		d.cache[v.RecordID].Merge(v)
 	}
 	return d.Domain.UpdateByRecords(rcd...)
 }

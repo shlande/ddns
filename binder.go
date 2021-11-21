@@ -1,4 +1,11 @@
-package dns
+package ddns
+
+func NewBinder(prefix string, domain Domain) *Binder {
+	return &Binder{
+		domain: domain,
+		prefix: prefix,
+	}
+}
 
 type Binder struct {
 	domain Domain

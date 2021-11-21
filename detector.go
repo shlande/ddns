@@ -1,9 +1,9 @@
 package ddns
 
-type IpGetter interface {
+type Detector interface {
 	IP() ([]string, error)
 }
 
-type IPv6Getter interface {
+type DetectorV6 interface {
 	IPv6() ([]string, error)
 }

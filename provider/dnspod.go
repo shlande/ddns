@@ -1,7 +1,8 @@
-package dns
+package provider
 
 import (
 	"fmt"
+	"github.com/shlande/ddns"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	dnspod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod/v20210323"
@@ -38,7 +39,15 @@ func NewDnsPodClient(secretId, secretKey string) (*dnsPodClient, error) {
 	}, nil
 }
 
-func NewDnsPodDomain(domain string, client *dnsPodClient) (*dnsPodDomain, error) {
+func NewDnsPodDomain(domain, secretId, secretKey string) (*dnsPodDomain, error) {
+	client, err := NewDnsPodClient(secretId, secretKey)
+	if err != nil {
+		return nil, err
+	}
+	return newDnsPodDomain(domain, client)
+}
+
+func newDnsPodDomain(domain string, client *dnsPodClient) (*dnsPodDomain, error) {
 	if id, has := client.domains[domain]; has {
 		return &dnsPodDomain{
 			dnsPodClient: client,
@@ -59,7 +68,7 @@ type dnsPodDomain struct {
 	id_ uint64
 }
 
-func (d *dnsPodDomain) GetByPrefix(prefix string) ([]*Record, error) {
+func (d *dnsPodDomain) GetByPrefix(prefix string) ([]*ddns.Record, error) {
 	request := dnspod.NewDescribeRecordListRequest()
 
 	request.DomainId = common.Uint64Ptr(d.id_)
@@ -70,9 +79,9 @@ func (d *dnsPodDomain) GetByPrefix(prefix string) ([]*Record, error) {
 	if err != nil {
 		return nil, err
 	}
-	var rcds = make([]*Record, 0, len(response.Response.RecordList))
+	var rcds = make([]*ddns.Record, 0, len(response.Response.RecordList))
 	for _, v := range response.Response.RecordList {
-		rcds = append(rcds, &Record{
+		rcds = append(rcds, &ddns.Record{
 			Type:       *v.Type,
 			DomainName: d.domain,
 			RecordID:   strconv.Itoa(int(*v.RecordId)),
@@ -83,7 +92,7 @@ func (d *dnsPodDomain) GetByPrefix(prefix string) ([]*Record, error) {
 	return rcds, nil
 }
 
-func (d *dnsPodDomain) CreateByRecords(rcds ...*Record) error {
+func (d *dnsPodDomain) CreateByRecords(rcds ...*ddns.Record) error {
 	request := dnspod.NewCreateRecordRequest()
 
 	request.Domain = common.StringPtr(d.domain)
@@ -102,7 +111,7 @@ func (d *dnsPodDomain) CreateByRecords(rcds ...*Record) error {
 	return nil
 }
 
-func (d *dnsPodDomain) UpdateByRecords(rcds ...*Record) error {
+func (d *dnsPodDomain) UpdateByRecords(rcds ...*ddns.Record) error {
 	request := dnspod.NewModifyRecordRequest()
 
 	request.Domain = common.StringPtr(d.domain)
@@ -121,7 +130,7 @@ func (d *dnsPodDomain) UpdateByRecords(rcds ...*Record) error {
 	return nil
 }
 
-func (d *dnsPodDomain) DeleteByRecords(rcds ...*Record) error {
+func (d *dnsPodDomain) DeleteByRecords(rcds ...*ddns.Record) error {
 	request := dnspod.NewDeleteRecordRequest()
 	request.Domain = common.StringPtr(d.domain)
 

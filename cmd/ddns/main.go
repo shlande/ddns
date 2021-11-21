@@ -1,63 +1,39 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"github.com/shlande/ddns"
-	"log"
-	"time"
 )
 
-var provider, domain, prefix, tp string
+type Config struct {
+	BindConfig
+	// 制定类型，ip或者ipv4
+	Type   string
+	Detect string
+	TTL    int
+}
 
-var ttl, maxRetry int
+var config Config
 
 func main() {
-	var (
-		dns ddns.DNS
-		err error
-	)
-	flag.StringVar(&provider, "provider", "", "ddns服务提供商，目前支持alidns和dnspod")
-	flag.StringVar(&domain, "domain", "", "需要解析的域名")
-	flag.StringVar(&prefix, "prefix", "", "域名的前缀")
-	flag.IntVar(&ttl, "ttl", 30, "查询间隔")
-	flag.IntVar(&maxRetry, "retry", 60, "最大连续出错次数")
-	flag.StringVar(&tp, "type", "ipv4", "绑定网络的类型，支持ipv4，ipv6，xd(校园网)")
+	flag.StringVar(&config.Provider, "provider", "", "ddns服务提供商，目前支持alidns和dnspod")
+	flag.StringVar(&config.Domain, "domain", "", "需要解析的域名")
+	flag.StringVar(&config.Prefix, "prefix", "", "域名的前缀")
+	flag.IntVar(&config.TTL, "ttl", 30, "查询间隔")
+	flag.StringVar(&config.Detect, "detect", "ip", "绑定ip获取器，支持public，xd, device")
+	flag.StringVar(&config.Type, "type", "ip", "网络类型，支持ip，ipv6")
 
 	flag.Parse()
 
-	switch provider {
-	case "alidns":
-		dns, err = ParseAliDNS(flag.Args())
-	case "dnspod":
-		dns, err = ParseDnsPod(flag.Args())
-	default:
-		flag.PrintDefaults()
-		return
-	}
-	if err != nil {
-		panic(err)
-	}
-	Run(dns)
-}
+	binder := buildBinder(config.BindConfig)
 
-func Run(dns ddns.DNS) {
-	// 立刻测试，如果出错则panic
-	err := dns.Update()
-	if err != nil {
-		panic(err)
-	}
-	var curErrTime int
-	for {
-		time.Sleep(time.Duration(ttl) * time.Second)
-		err := dns.Update()
-		if err != nil {
-			log.Println(err)
-			curErrTime++
-			if curErrTime > maxRetry {
-				panic("连续出错次数超过允许的范围")
-			}
-			continue
-		}
-		curErrTime = 0
+	switch config.Type {
+	case "ip":
+		detector := buildDetector(config.Detect)
+		ddns.RunIpWorker(context.Background(), detector, binder, int64(config.TTL))
+	case "ipv6":
+		detector := buildDetectorV6(config.Detect)
+		ddns.RunIpv6Worker(context.Background(), detector, binder, int64(config.TTL))
 	}
 }

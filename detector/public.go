@@ -1,4 +1,4 @@
-package ip
+package detector
 
 import (
 	"encoding/json"
@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-// PublicIpGetter 获取外网ip
-type PublicIpGetter struct{}
+// Public 获取外网ip
+type Public struct{}
 
-func (p PublicIpGetter) IP() ([]string, error) {
+func (p Public) IP() ([]string, error) {
 	var status, ip string
 	rsp := make(map[string]interface{})
 	request, err := http.Get("http://ip-api.com/json/")

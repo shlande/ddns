@@ -1,4 +1,4 @@
-package ip
+package detector
 
 import (
 	"errors"
@@ -13,20 +13,20 @@ var (
 	ErrInterface = errors.New("无法获取网卡信息")
 )
 
-func NewDeviceGetter(match string) *DeviceGetter {
+func NewDeviceGetter(match string) (*Device, error) {
 	rex, err := regexp.Compile(match)
 	if err != nil {
-		logrus.Fatalf("无法解析正则：%v", err)
+		return nil, fmt.Errorf("无法解析正则：%v", err)
 	}
 	// 首先尝试获取一次
 	_, find, err := getIpFromDevice(rex, false, false)
 	if err != nil {
-		logrus.Fatalf("无法获取网卡信息：%v", err)
+		return nil, fmt.Errorf("无法获取网卡信息：%v", err)
 	}
 	if !find {
 		logrus.Fatalf("没有找到匹配的网卡：%v", err)
 	}
-	return &DeviceGetter{rex: rex}
+	return &Device{rex: rex}, nil
 }
 
 func getIpFromDevice(rex *regexp.Regexp, ipv4 bool, ipv6 bool) ([]*net.IPNet, bool, error) {
@@ -56,11 +56,11 @@ func getIpFromDevice(rex *regexp.Regexp, ipv4 bool, ipv6 bool) ([]*net.IPNet, bo
 	return ips, len(ifac) != 0, nil
 }
 
-type DeviceGetter struct {
+type Device struct {
 	rex *regexp.Regexp
 }
 
-func (d DeviceGetter) IPv6() ([]string, error) {
+func (d Device) IPv6() ([]string, error) {
 	res, _, err := getIpFromDevice(d.rex, false, true)
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (d DeviceGetter) IPv6() ([]string, error) {
 	return ips, nil
 }
 
-func (d DeviceGetter) IP() ([]string, error) {
+func (d Device) IP() ([]string, error) {
 	res, _, err := getIpFromDevice(d.rex, true, false)
 	if err != nil {
 		return nil, err
