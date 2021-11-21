@@ -38,10 +38,15 @@ var detectorV6s = map[string]DetectorV6Builder{
 
 func buildDetector(detect string) ddns.Detector {
 	raw := strings.Split(detect, "=")
-	if len(raw) < 1 || len(raw) > 2 {
+	var detectorName, input string
+	switch len(raw) {
+	case 1:
+		detectorName = raw[0]
+	case 2:
+		detectorName, input = raw[0], raw[1]
+	default:
 		logrus.Fatal("参数数量应在1-2之间")
 	}
-	detectorName, input := raw[0], raw[1]
 	for k, v := range detectors {
 		if k == detectorName {
 			return v(input)

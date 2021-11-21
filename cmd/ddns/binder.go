@@ -38,5 +38,5 @@ func buildDomain(pvd, domain, id, key string) ddns.Domain {
 	if err != nil {
 		logrus.Fatalf("无法创建dns:%v", err)
 	}
-	return dm
+	return ddns.WithCache(dm)
 }

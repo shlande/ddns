@@ -176,7 +176,7 @@ func (c *cloudflare) cache() error {
 	return nil
 }
 
-func NewCloudflareDomain(token, domain string) (*cloudflareDomain, error) {
+func NewCloudflareDomain(domain, token string) (*cloudflareDomain, error) {
 	cf, err := NewCloudFlare(token)
 	if err != nil {
 		return nil, err
@@ -233,13 +233,14 @@ func (c cloudflareDomain) GetByPrefix(prefix string) ([]*ddns.Record, error) {
 }
 
 func (c cloudflareDomain) CreateByRecords(rcds ...*ddns.Record) error {
-	cfrcds := rcd2cfs(rcds...)
-	for i, v := range cfrcds {
-		err := c.client.createRecords(v)
+	for i, v := range rcds {
+		v.DomainName = c.domain
+		r := rcd2cfs(v)[0]
+		err := c.client.createRecords(r)
 		if err != nil {
 			return err
 		}
-		*rcds[i] = *cf2rcds(rcds[i].Prefix, v)[0]
+		*rcds[i] = *cf2rcds(rcds[i].Prefix, r)[0]
 	}
 	return nil
 }
