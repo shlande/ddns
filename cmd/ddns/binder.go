@@ -30,6 +30,8 @@ func buildDomain(pvd, domain, id, key string) ddns.Domain {
 		dm, err = provider.NewAliDomain(domain, id, key)
 	case "dnspod":
 		dm, err = provider.NewDnsPodDomain(domain, id, key)
+	case "cloudflare":
+		dm, err = provider.NewCloudflareDomain(domain, key)
 	default:
 		logrus.Fatal("无效的dns类型,目前只支持alidns和dnspod")
 	}

@@ -17,7 +17,7 @@ type Config struct {
 var config Config
 
 func main() {
-	flag.StringVar(&config.Provider, "provider", "", "ddns服务提供商，目前支持alidns和dnspod")
+	flag.StringVar(&config.Provider, "provider", "", "ddns服务提供商，目前支持alidns,dnspod,cloudflare")
 	flag.StringVar(&config.Domain, "domain", "", "需要解析的域名")
 	flag.StringVar(&config.Prefix, "prefix", "", "域名的前缀")
 	flag.IntVar(&config.TTL, "ttl", 30, "查询间隔")
