@@ -21,8 +21,8 @@ func main() {
 	flag.StringVar(&config.Domain, "domain", "", "需要解析的域名")
 	flag.StringVar(&config.Prefix, "prefix", "", "域名的前缀")
 	flag.IntVar(&config.TTL, "ttl", 30, "查询间隔")
-	flag.StringVar(&config.Detect, "detect", "ip", "绑定ip获取器，支持public，xd, device")
-	flag.StringVar(&config.Type, "type", "ip", "网络类型，支持ip，ipv6")
+	flag.StringVar(&config.Detect, "detect", "pubic", "绑定ip获取器，支持public(公网ip)，xd(校园网), device=<name>(直接从网卡中获取信息，支持正则)")
+	flag.StringVar(&config.Type, "type", "ip", "获取ip的类型，支持ip，ipv6")
 	flag.StringVar(&config.SecretKey, "secret-key", "", "密钥")
 	flag.StringVar(&config.SecretId, "secret-id", "", "密钥id")
 

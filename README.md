@@ -1,30 +1,56 @@
-## DDNS
-go语言实现的ddns，能将公网ip自动绑定到指定域名，支持：
+# DDNS
 
-1. ipv6
-2. ipv4
-3. xd校园网（ipv4）
+go语言实现的ddns，能将ip自动绑定到指定域名。
 
-```go
-package main
-import "github.com/shland/ddns"
+## 使用方法
 
-func main() {
-    d := ddns.NewAliDNS("key","secret",ddns.DomainInfo{"name","prefix"})
-    d.Update()
-}
+### 安装
+
 ```
-TODO:
-1. 支持从网卡中获取ip
+go 
+```
 
-   这里的规则仿照calico的规则：
+### DNS
 
-    1. 支持通过名称来匹配
-    2. 支持通过是否能够ping同某个地址来匹配
+支持的dns服务提供方有
 
-2. 重构一下：
+1. 阿里云
+2. Dnspod（腾讯云）
+3. cloudflare（todo）
 
-   分为：IPGetter，DnsProvider。
+### 获取ip
 
-   IPGetter负责提供ip信息，DnsProvider负责把指定信息绑定好。
+通过detect参数来指定。
 
+1. 从网卡获取地址（支持ipv4/ipv6）：
+   
+   ip 参数传入 `device=<match>`，其中match支持正则表达式，如果匹配到多个网卡，那么会把所有的网络地址都绑定到域名上
+
+   例如： 
+   
+   ```
+   --detect=device=ens.* # 获取所有以ens开头的网卡的ip
+   --detect=device=eth0 # 获取网卡名为eth0的ip
+   ```
+   
+2. 获取公网ip（仅支持ipv4）：
+
+   使用ip-addr的公开接口查找发起请求方的ip地址。
+
+3. xd内网（仅支持ipv4）
+
+   获取校园网内网ip，并绑定到域名上。
+
+### 例子
+
+每过十秒检查一次校园网ip，并绑定到test.shlande.top中，dns服务提供方是dnspod
+
+```
+ddns --provider=dnspod --domain=colaha.tech --prefix=test --detect=xd --type=ip --secret-id=<id_here> --secret-key=<key-here>
+```
+
+## TODO
+
+1. 支持配置文件绑定
+2. 允许多个域名同时绑定
+3. detect模仿calico，支持连通性测试后自动选择
