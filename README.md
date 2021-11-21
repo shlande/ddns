@@ -7,7 +7,7 @@ go语言实现的ddns，能将ip自动绑定到指定域名。
 ### 安装
 
 ```
-go 
+go install github.com/shlande/ddns/cmd/ddns@latest
 ```
 
 ### DNS
@@ -46,7 +46,7 @@ go
 每过十秒检查一次校园网ip，并绑定到test.shlande.top中，dns服务提供方是dnspod
 
 ```
-ddns --provider=dnspod --domain=colaha.tech --prefix=test --detect=xd --type=ip --secret-id=<id_here> --secret-key=<key-here>
+ddns --provider=dnspod --domain=shlande.top --prefix=test --detect=xd --type=ip --secret-id=<id_here> --secret-key=<key-here>
 ```
 
 ## TODO
