@@ -197,7 +197,7 @@ func cf2rcds(prefix string, records ...*cloudflareRecord) []*ddns.Record {
 	for _, record := range records {
 		res = append(res, &ddns.Record{
 			Type:       record.Type,
-			DomainName: record.Name[len(prefix):],
+			DomainName: record.Name[len(prefix)+1 : len(record.Name)],
 			RecordID:   record.Id,
 			Value:      record.Content,
 			Prefix:     prefix,
